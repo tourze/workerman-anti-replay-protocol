@@ -4,7 +4,10 @@
   "license": "MIT",
   "require": {
     "php": "^8.1",
-    "workerman/workerman": "^5.1"
+    "ext-hash": "*",
+    "workerman/workerman": "^5.1",
+    "symfony/cache": "^6.4",
+    "psr/log": "^3|^2|^1"
   },
   "autoload": {
     "psr-4": {
