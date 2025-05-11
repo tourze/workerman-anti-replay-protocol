@@ -7,6 +7,7 @@
     "ext-hash": "*",
     "psr/log": "^3|^2|^1",
     "symfony/cache": "^6.4",
+    "symfony/cache-contracts": "^3",
     "workerman/workerman": "^5.1"
   },
   "require-dev": {
