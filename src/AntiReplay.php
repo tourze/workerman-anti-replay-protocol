@@ -3,6 +3,7 @@
 namespace Tourze\Workerman\AntiReplayProtocol;
 
 use Symfony\Contracts\Cache\ItemInterface;
+use Tourze\Workerman\ConnectionContext\ContextContainer;
 use Workerman\Connection\ConnectionInterface;
 use Workerman\Protocols\ProtocolInterface;
 
@@ -30,7 +31,11 @@ class AntiReplay implements ProtocolInterface
     public static function input($buffer, ConnectionInterface $connection): int
     {
         $length = strlen($buffer);
-        if (isset($connection->_passAntiReplayCheck)) {
+        
+        // 使用 ContextContainer 检查连接是否已通过反重放检查
+        $contextContainer = ContextContainer::getInstance();
+        $context = $contextContainer->getContext($connection, AntiReplayContext::class);
+        if ($context !== null && $context->isPassAntiReplayCheck()) {
             return $length;
         }
 
@@ -52,6 +57,14 @@ class AntiReplay implements ProtocolInterface
             $item->expiresAfter($checkTTL);
             return 1;
         });
+        
+        // 标记此连接已通过反重放检查
+        if ($context === null) {
+            $context = new AntiReplayContext();
+            $contextContainer->setContext($connection, $context);
+        }
+        $context->setPassAntiReplayCheck(true);
+        
         return $length;
     }
 

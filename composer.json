@@ -8,6 +8,7 @@
     "psr/log": "^3|^2|^1",
     "symfony/cache": "^6.4",
     "symfony/cache-contracts": "^3",
+    "tourze/workerman-connection-context": "0.0.*",
     "workerman/workerman": "^5.1"
   },
   "require-dev": {

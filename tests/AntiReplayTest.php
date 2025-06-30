@@ -7,7 +7,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Tourze\Workerman\AntiReplayProtocol\AntiReplay;
+use Tourze\Workerman\AntiReplayProtocol\AntiReplayContext;
 use Tourze\Workerman\AntiReplayProtocol\Config;
+use Tourze\Workerman\ConnectionContext\ContextContainer;
 use Workerman\Connection\ConnectionInterface;
 
 class AntiReplayTest extends TestCase
@@ -121,8 +123,11 @@ class AntiReplayTest extends TestCase
     {
         $buffer = str_repeat('a', 100); // 100字节
 
-        // 模拟已通过检查的连接
-        $this->connection->_passAntiReplayCheck = true;
+        // 使用 ContextContainer 模拟已通过检查的连接
+        $contextContainer = ContextContainer::getInstance();
+        $context = new AntiReplayContext();
+        $context->setPassAntiReplayCheck(true);
+        $contextContainer->setContext($this->connection, $context);
 
         $result = AntiReplay::input($buffer, $this->connection);
 
@@ -199,5 +204,8 @@ class AntiReplayTest extends TestCase
         $config->setCache($this->createMock(AbstractAdapter::class));
         $config->setLogger($this->createMock(LoggerInterface::class));
         AntiReplay::setConfig($config);
+        
+        // 清理 ContextContainer
+        ContextContainer::resetInstance();
     }
 }
