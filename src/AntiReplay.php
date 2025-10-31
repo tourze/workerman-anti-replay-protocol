@@ -31,11 +31,11 @@ class AntiReplay implements ProtocolInterface
     public static function input($buffer, ConnectionInterface $connection): int
     {
         $length = strlen($buffer);
-        
+
         // 使用 ContextContainer 检查连接是否已通过反重放检查
         $contextContainer = ContextContainer::getInstance();
         $context = $contextContainer->getContext($connection, AntiReplayContext::class);
-        if ($context !== null && $context->isPassAntiReplayCheck()) {
+        if (null !== $context && $context->isPassAntiReplayCheck()) {
             return $length;
         }
 
@@ -43,11 +43,12 @@ class AntiReplay implements ProtocolInterface
         if ($length < $checkLen) {
             return $checkLen;
         }
-        //$hash = md5(substr($recv_buffer, 0, $checkLen));
+        // $hash = md5(substr($recv_buffer, 0, $checkLen));
         $hash = 'anti-replay-' . hash('xxh3', substr($buffer, 0, $checkLen));
         // 如果缓存已经存在，那么就说明发送过了
         if (self::getConfig()->getCache()->hasItem($hash)) {
             self::getConfig()->getLogger()->error('检测到重放攻击，来自' . $connection->getRemoteAddress());
+
             return 0;
         }
 
@@ -55,16 +56,17 @@ class AntiReplay implements ProtocolInterface
         $checkTTL = self::getConfig()->getTtl();
         self::getConfig()->getCache()->get($hash, function (ItemInterface $item) use ($checkTTL) {
             $item->expiresAfter($checkTTL);
+
             return 1;
         });
-        
+
         // 标记此连接已通过反重放检查
-        if ($context === null) {
+        if (null === $context) {
             $context = new AntiReplayContext();
             $contextContainer->setContext($connection, $context);
         }
         $context->setPassAntiReplayCheck(true);
-        
+
         return $length;
     }
 
@@ -75,6 +77,6 @@ class AntiReplay implements ProtocolInterface
 
     public static function encode($data, ConnectionInterface $connection): string
     {
-        return $data;
+        return (string) $data;
     }
 }

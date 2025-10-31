@@ -1,5 +1,13 @@
 # Workerman Anti-Replay Protocol
 
+[![PHP Version Require](https://poser.pugx.org/tourze/workerman-anti-replay-protocol/require/php)](https://packagist.org/packages/tourze/workerman-anti-replay-protocol)
+[![Latest Stable Version](https://poser.pugx.org/tourze/workerman-anti-replay-protocol/v/stable)](https://packagist.org/packages/tourze/workerman-anti-replay-protocol)
+[![License](https://poser.pugx.org/tourze/workerman-anti-replay-protocol/license)](https://packagist.org/packages/tourze/workerman-anti-replay-protocol)
+[![Total Downloads](https://poser.pugx.org/tourze/workerman-anti-replay-protocol/downloads)](https://packagist.org/packages/tourze/workerman-anti-replay-protocol)
+[![Code Coverage](https://img.shields.io/codecov/c/github/tourze/php-monorepo.svg?style=flat-square)](https://codecov.io/github/tourze/php-monorepo)
+
+[English](README.md) | [中文](README.zh-CN.md)
+
 这个包提供了一个防重放攻击的协议实现，适用于Workerman框架。
 
 ## 功能特点
@@ -70,3 +78,7 @@ composer install
 
 - [shadowsocks防重放攻击](https://github.com/shadowsocks/shadowsocks-org/issues/184)
 - [Workerman文档](https://www.workerman.net/doc)
+
+## License
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。

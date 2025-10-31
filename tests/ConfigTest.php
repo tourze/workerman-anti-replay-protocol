@@ -2,24 +2,32 @@
 
 namespace Tourze\Workerman\AntiReplayProtocol\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Tourze\Workerman\AntiReplayProtocol\Config;
+use Tourze\Workerman\AntiReplayProtocol\Exception\InvalidConfigException;
 
-class ConfigTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Config::class)]
+final class ConfigTest extends TestCase
 {
     private Config $config;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->config = new Config();
     }
 
     /**
      * 测试默认检查长度值
      */
-    public function test_getCheckLength_returnsDefaultValue(): void
+    public function testGetCheckLengthReturnsDefaultValue(): void
     {
         // 默认值应为32
         $this->assertEquals(32, $this->config->getCheckLength());
@@ -28,7 +36,7 @@ class ConfigTest extends TestCase
     /**
      * 测试设置和获取检查长度
      */
-    public function test_setAndGetCheckLength_changesValueCorrectly(): void
+    public function testSetAndGetCheckLengthChangesValueCorrectly(): void
     {
         $this->config->setCheckLength(64);
         $this->assertEquals(64, $this->config->getCheckLength());
@@ -37,7 +45,7 @@ class ConfigTest extends TestCase
     /**
      * 测试设置和获取缓存
      */
-    public function test_setAndGetCache_storesCorrectly(): void
+    public function testSetAndGetCacheStoresCorrectly(): void
     {
         $mockCache = $this->createMock(AbstractAdapter::class);
 
@@ -48,7 +56,7 @@ class ConfigTest extends TestCase
     /**
      * 测试默认TTL值
      */
-    public function test_getTtl_returnsDefaultValue(): void
+    public function testGetTtlReturnsDefaultValue(): void
     {
         // 默认值应为24小时
         $this->assertEquals(60 * 60 * 24, $this->config->getTtl());
@@ -57,7 +65,7 @@ class ConfigTest extends TestCase
     /**
      * 测试设置和获取TTL
      */
-    public function test_setAndGetTtl_changesValueCorrectly(): void
+    public function testSetAndGetTtlChangesValueCorrectly(): void
     {
         $this->config->setTtl(3600);
         $this->assertEquals(3600, $this->config->getTtl());
@@ -66,7 +74,7 @@ class ConfigTest extends TestCase
     /**
      * 测试设置和获取日志器
      */
-    public function test_setAndGetLogger_storesCorrectly(): void
+    public function testSetAndGetLoggerStoresCorrectly(): void
     {
         $mockLogger = $this->createMock(LoggerInterface::class);
 
@@ -77,25 +85,27 @@ class ConfigTest extends TestCase
     /**
      * 测试checkLength为0的边界情况
      */
-    public function test_setCheckLength_withZeroValue(): void
+    public function testSetCheckLengthWithZeroValue(): void
     {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('checkLength must be greater than 0');
         $this->config->setCheckLength(0);
-        $this->assertEquals(0, $this->config->getCheckLength());
     }
 
     /**
      * 测试checkLength为负值的边界情况
      */
-    public function test_setCheckLength_withNegativeValue(): void
+    public function testSetCheckLengthWithNegativeValue(): void
     {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('checkLength must be greater than 0');
         $this->config->setCheckLength(-10);
-        $this->assertEquals(-10, $this->config->getCheckLength());
     }
 
     /**
      * 测试TTL为0的边界情况
      */
-    public function test_setTtl_withZeroValue(): void
+    public function testSetTtlWithZeroValue(): void
     {
         $this->config->setTtl(0);
         $this->assertEquals(0, $this->config->getTtl());
@@ -104,9 +114,10 @@ class ConfigTest extends TestCase
     /**
      * 测试TTL为负值的边界情况
      */
-    public function test_setTtl_withNegativeValue(): void
+    public function testSetTtlWithNegativeValue(): void
     {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('ttl must be non-negative');
         $this->config->setTtl(-3600);
-        $this->assertEquals(-3600, $this->config->getTtl());
     }
 }

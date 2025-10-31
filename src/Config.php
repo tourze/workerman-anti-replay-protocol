@@ -4,6 +4,7 @@ namespace Tourze\Workerman\AntiReplayProtocol;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
+use Tourze\Workerman\AntiReplayProtocol\Exception\InvalidConfigException;
 
 class Config
 {
@@ -19,6 +20,9 @@ class Config
 
     public function setCheckLength(int $checkLength): void
     {
+        if ($checkLength <= 0) {
+            throw new InvalidConfigException('checkLength must be greater than 0');
+        }
         $this->checkLength = $checkLength;
     }
 
@@ -49,6 +53,9 @@ class Config
 
     public function setTtl(int $ttl): void
     {
+        if ($ttl < 0) {
+            throw new InvalidConfigException('ttl must be non-negative');
+        }
         $this->ttl = $ttl;
     }
 
